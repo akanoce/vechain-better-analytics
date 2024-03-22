@@ -1,0 +1,23 @@
+{
+  "name": "better-events",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/yargs": "^17.0.32",
+    "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "@vechain/sdk-core": "^1.0.0-beta.1",
+    "@vechain/sdk-network": "^1.0.0-beta.1",
+    "@vechain/sdk-provider": "^1.0.0-beta.1",
+    "fast-json-stable-stringify": "^2.1.0",
+    "write-excel-file": "^1.4.30",
+    "yargs": "^17.7.2"
+  }
+}
