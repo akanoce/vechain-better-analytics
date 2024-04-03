@@ -24,6 +24,19 @@ If yarn is not installed, follow [this](https://classic.yarnpkg.com/lang/en/docs
 
 ### Run the scripts
 
+#### Use common addresses
+
+For `-v`, `-f` and `-t` options used with the `--transfers` and `--votes` scripts, you can use common names to have their addresses automatically resolved.
+This is the names we currently support:
+
+- mugshot_treasury;
+- mugshot_contract;
+- cleanify_treasury;
+- cleanify_campaigns;
+- cleanify_daily;
+- vyvo_treasury;
+- treasury;
+
 #### Generate insights XLSX
 
 `yarn start --insights`
