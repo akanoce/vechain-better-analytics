@@ -1,5 +1,25 @@
 # vechain-better-events
 
+## Table of Contents
+
+- [vechain-better-events](#vechain-better-events)
+  - [Contents](#contents)
+  - [Usage](#usage)
+    - [Install the required packages](#install-the-required-packages)
+    - [Run the scripts](#run-the-scripts)
+      - [Use common addresses](#use-common-addresses)
+      - [Generate insights XLSX](#generate-insights-xlsx)
+      - [B3TR transfers](#b3tr-transfers)
+        - [Get all transfers](#get-all-transfers)
+        - [Get all transfers from a specific address](#get-all-transfers-from-a-specific-address)
+        - [Get all transfers to a specific address](#get-all-transfers-to-a-specific-address)
+        - [Get all transfers from and to a specific address](#get-all-transfers-from-and-to-a-specific-address)
+      - [Allocations votes](#allocations-votes)
+        - [All votes of a specific user](#all-votes-of-a-specific-user)
+        - [All votes of all rounds](#all-votes-of-all-rounds)
+        - [All votes of a specific round](#all-votes-of-a-specific-round)
+        - [All votes of a specific round from a specific user](#all-votes-of-a-specific-round-from-a-specific-user)
+
 ## Contents
 
 This repo contains a series of scripts useful in order to aggregate and gather analytics from events emitted from the b3tr contracts.
