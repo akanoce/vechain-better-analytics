@@ -37,16 +37,11 @@ const main = async () => {
 
   if (argv.votes) {
     console.log("Votes flag is set");
-    if (!argv.r) {
-      console.log("Please provide a round number to filter votes");
-      process.exit();
-    }
-    const { totalVotesCasted, sortedVotes } = await filterAllocationVotes(
-      argv.r,
-      argv.v
-    );
+    const { totalVotesCasted, formattedDecoded, appsInsights } =
+      await filterAllocationVotes(argv.r, argv.v);
     console.log("Total votes casted:", totalVotesCasted);
-    console.log("Top 10 voters:", sortedVotes.slice(0, 10));
+    console.log("Top 10 voters:", formattedDecoded.slice(0, 10));
+    console.log("Apps Insights:", appsInsights);
   }
 };
 

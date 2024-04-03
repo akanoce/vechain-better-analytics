@@ -1,18 +1,28 @@
 import { abi, unitsUtils } from "@vechain/sdk-core";
-import { HttpClient, ThorClient } from "@vechain/sdk-network";
 import { xAllocationVotingAddress } from "./constant/addresses";
 import { AllocationVoteCastAbi } from "./constant";
-
-const _testnetUrl = "https://testnet.vechain.org";
-const testNetwork = new HttpClient(_testnetUrl);
-const thorClient = new ThorClient(testNetwork);
+import { XApp, getApps, thorClient } from "./utils";
 
 const eventFragment = new abi.Event(AllocationVoteCastAbi);
 
+export type DecodedCastVoteEvent = {
+  voter: string;
+  roundId: string;
+  appsIds: string[];
+  voteWeights: string[];
+  formattedVoteWeights: string[];
+};
+
 export const filterAllocationVotes = async (
-  roundId: number,
+  roundId?: number,
   voter?: string
 ) => {
+  const apps = await getApps();
+  const appsMapping: Record<string, XApp> = {};
+
+  for (const app of apps) {
+    appsMapping[app.id] = app;
+  }
   const currentBlock = await thorClient.blocks.getBestBlockCompressed();
   const votingTopics = eventFragment.encodeFilterTopics([voter, roundId]);
 
@@ -53,14 +63,7 @@ export const filterAllocationVotes = async (
     return eventFragment.decodeEventLog({ data: log.data, topics: log.topics });
   });
 
-  type Decoded = {
-    voter: string;
-    roundId: string;
-    appsIds: string[];
-    voteWeights: string[];
-    formattedVoteWeights: string[];
-  };
-  const mapDecoded: Decoded[] = decoded.map((log) => {
+  const mapDecoded: DecodedCastVoteEvent[] = decoded.map((log) => {
     return {
       voter: log.voter,
       roundId: log.roundId,
@@ -92,5 +95,53 @@ export const filterAllocationVotes = async (
     );
   });
 
-  return { mapDecoded, sortedVotes, totalVotesCasted };
+  const formattedDecoded = sortedVotes.map((log) => {
+    const votesMap: Record<string, string> = {};
+    log.appsIds.forEach((appId, index) => {
+      const appName = appsMapping[appId].name;
+      votesMap[appName] = log.formattedVoteWeights[index];
+    });
+    return {
+      voter: log.voter,
+      roundId: log.roundId,
+      votes: votesMap,
+    };
+  });
+
+  const appsInsights = apps.map((app) => {
+    const appVotes = formattedDecoded.reduce((acc, log) => {
+      return acc + parseFloat(log.votes[app.name]);
+    }, 0);
+    const numberOfVoters = formattedDecoded.filter((log) => {
+      return log.votes[app.name] !== "0.0";
+    }).length;
+    const numberOfPreferredVotes = formattedDecoded.filter((log) => {
+      const appVote = log.votes[app.name];
+      return Object.keys(log.votes).every((key) => {
+        return Number(appVote) >= Number(log.votes[key]);
+      });
+    }).length;
+    return {
+      name: app.name,
+      totalVotes: appVotes,
+      numberOfVoters,
+      numberOfVotersPercentage: (
+        (numberOfVoters / formattedDecoded.length) *
+        100
+      ).toFixed(2),
+      numberOfPreferredVotes,
+      numberOfPreferredVotesPercentage: (
+        (numberOfPreferredVotes / formattedDecoded.length) *
+        100
+      ).toFixed(2),
+    };
+  });
+
+  return {
+    mapDecoded,
+    formattedDecoded,
+    sortedVotes,
+    totalVotesCasted,
+    appsInsights,
+  };
 };

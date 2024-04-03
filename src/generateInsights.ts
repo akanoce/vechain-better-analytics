@@ -1,53 +1,25 @@
-import { HttpClient, ThorClient } from "@vechain/sdk-network";
-import { xAllocationVotingAddress } from "./constant/addresses";
-import XAllocationVotingAbi from "./abis/XAllocationVoting.json";
-import { filterAllocationVotes } from "./allocationVoting";
-import writeXlsxFile from "write-excel-file";
+import {
+  DecodedCastVoteEvent,
+  filterAllocationVotes,
+} from "./allocationVoting";
+import writeXlsxFile from "write-excel-file/node";
+import { XApp, getApps, getCurrentRoundId } from "./utils";
 
-const _testnetUrl = "https://testnet.vechain.org";
-const testNetwork = new HttpClient(_testnetUrl);
-const thorClient = new ThorClient(testNetwork);
-
-const xAllocationContract = thorClient.contracts.load(
-  xAllocationVotingAddress,
-  XAllocationVotingAbi.abi
-);
-
-type XApp = {
-  id: string;
-  receiverAddress: string;
-  name: string;
-  createdAt: number;
-};
-const getApps = async () => {
-  const apps = (await xAllocationContract.read.getAllApps())[0];
-  const parsedXApps: XApp[] = apps.map((app: any) => {
-    return {
-      id: app[0],
-      receiverAddress: app[1],
-      name: app[2],
-      createdAt: app[3],
-    };
-  });
-  return parsedXApps;
-};
-
-const getCurrentRoundId = async () => {
-  const currentRoundId = (await xAllocationContract.read.currentRoundId())[0];
-  return currentRoundId;
-};
-
-const generateXlsFile = async (
-  rounds: number[],
-  addressesWithVotes: Record<string, Record<string, number>>
+const generateOverviewXlsData = async (
+  addressesWithVotes: Record<string, Record<string, DecodedCastVoteEvent>>,
+  rounds: number[]
 ) => {
   const headerRow = [
     {
       value: "Address",
       fontWeight: "bold",
     },
+    {
+      value: "Total Votes casted",
+      fontWeight: "bold",
+    },
     ...rounds.map((round) => ({
-      value: `Round ${round}`,
+      value: `Round ${round} - Votes casted`,
       fontWeight: "bold",
     })),
   ];
@@ -56,24 +28,124 @@ const generateXlsFile = async (
     const roundsVotes = Object.keys(addressesWithVotes[address]).map(
       (round) => ({
         type: Number,
-        value: addressesWithVotes[address][round],
+        value: addressesWithVotes[address][round].formattedVoteWeights.reduce(
+          (prev, curr) => Number(prev) + Number(curr),
+          0
+        ),
       })
     );
+    const totalVotes = roundsVotes.reduce((prev, curr) => prev + curr.value, 0);
     return [
       {
         type: String,
         value: address,
       },
+      { type: Number, value: totalVotes },
       ...roundsVotes,
     ];
   });
 
-  const data = [...rows];
-
-  await writeXlsxFile(data, {
-    fileName: "file.xlsx",
-  });
+  const data = [headerRow, ...rows];
+  return data;
 };
+
+const generateRoundXlsData = async (
+  addressesWithVotes: Record<string, Record<string, DecodedCastVoteEvent>>,
+  roundId: number,
+  apps: XApp[]
+) => {
+  const headerRow = [
+    {
+      value: "Address",
+      fontWeight: "bold",
+    },
+    ...apps.map((app) => ({
+      value: app.name,
+      fontWeight: "bold",
+    })),
+  ];
+
+  const roundUserAppsVotes: { type: any; value: any }[][] = [];
+
+  // for every user, get their votes for each round
+  Object.keys(addressesWithVotes).forEach((address) => {
+    const votes = addressesWithVotes[address];
+    const roundVotes = votes[roundId];
+
+    if (roundVotes) {
+      const userAppsVotes = apps.map((app) => {
+        const appVoteIndex = roundVotes.formattedVoteWeights.findIndex(
+          (vote, index) => vote && app.id === roundVotes.appsIds[index]
+        );
+        const appVote = roundVotes.formattedVoteWeights[appVoteIndex];
+
+        return {
+          type: String,
+          value: appVote,
+        };
+        // @ts-ignore
+      });
+
+      const newArray = [];
+
+      roundUserAppsVotes.push([
+        {
+          type: String,
+          value: address,
+        },
+        ...userAppsVotes,
+      ]);
+    } else {
+      roundUserAppsVotes.push([
+        {
+          type: String,
+          value: address,
+        },
+        ...apps.map((app) => ({
+          type: Number,
+          value: 0,
+        })),
+      ]);
+    }
+  });
+
+  return [headerRow, ...roundUserAppsVotes];
+};
+
+const generateXlsFile = async (
+  addressesWithVotes: Record<string, Record<string, DecodedCastVoteEvent>>,
+  rounds: number[],
+  apps: XApp[]
+) => {
+  const overViewData = await generateOverviewXlsData(
+    addressesWithVotes,
+    rounds
+  );
+
+  const roundsRows = [];
+  for (const round of rounds) {
+    const roundXlsData = await generateRoundXlsData(
+      addressesWithVotes,
+      round,
+      apps
+    );
+    roundsRows.push({ round, data: roundXlsData });
+  }
+  const filePath = "./vebetterdao_insights.xlsx";
+
+  await writeXlsxFile(
+    //@ts-ignore
+    [overViewData, ...roundsRows.map((round) => round.data)],
+    {
+      filePath,
+      sheets: [
+        "Overview",
+        ...roundsRows.map((round) => `Round ${round.round}`),
+      ],
+    }
+  );
+};
+
 export const generateInsights = async () => {
   const apps = await getApps();
   const currentRoundId = await getCurrentRoundId();
@@ -93,21 +165,20 @@ export const generateInsights = async () => {
     })
   );
 
-  const addressesWithVotes: Record<string, Record<string, number>> = {};
+  const addressesWithVotes: Record<
+    string,
+    Record<string, DecodedCastVoteEvent>
+  > = {};
 
   for (const round of roundsVotes) {
     for (const vote of round.votes) {
-      const totalVotes = vote.voteWeights.reduce(
-        (prev, curr) => Number(prev) + Number(curr),
-        0
-      );
       if (!addressesWithVotes[vote.voter]) {
         addressesWithVotes[vote.voter] = {};
       }
 
-      addressesWithVotes[vote.voter][round.roundId] = totalVotes;
+      addressesWithVotes[vote.voter][round.roundId] = vote;
     }
   }
 
-  await generateXlsFile(allRounds, addressesWithVotes);
+  await generateXlsFile(addressesWithVotes, allRounds, apps);
 };
