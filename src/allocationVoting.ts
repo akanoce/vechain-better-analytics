@@ -84,7 +84,7 @@ export const filterAllocationVotes = async (
     );
   }, 0);
 
-  const sortedVotes = mapDecoded.sort((a, b) => {
+  const sortedVotes = mapDecoded.toSorted((a, b) => {
     return (
       b.formattedVoteWeights.reduce((acc, weight) => {
         return acc + parseFloat(weight);
@@ -110,10 +110,10 @@ export const filterAllocationVotes = async (
 
   const appsInsights = apps.map((app) => {
     const appVotes = formattedDecoded.reduce((acc, log) => {
-      return acc + parseFloat(log.votes[app.name]);
+      return acc + (log.votes[app.name] ? parseFloat(log.votes[app.name]) : 0);
     }, 0);
     const numberOfVoters = formattedDecoded.filter((log) => {
-      return log.votes[app.name] !== "0.0";
+      return !!log.votes[app.name] && log.votes[app.name] !== "0.0";
     }).length;
     const numberOfPreferredVotes = formattedDecoded.filter((log) => {
       const appVote = log.votes[app.name];
@@ -124,6 +124,7 @@ export const filterAllocationVotes = async (
     return {
       name: app.name,
       totalVotes: appVotes,
+      totalVotesPercentage: ((appVotes / totalVotesCasted) * 100).toFixed(2),
       numberOfVoters,
       numberOfVotersPercentage: (
         (numberOfVoters / formattedDecoded.length) *

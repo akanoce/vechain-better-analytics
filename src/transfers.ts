@@ -70,7 +70,7 @@ export const filterTransfers = async (
   }, 0);
   console.log("Total transferred:", totalTransferred);
 
-  const sortedTransfers = mapDecoded.sort((a, b) => {
+  const sortedTransfers = mapDecoded.toSorted((a, b) => {
     return parseFloat(b.value) - parseFloat(a.value);
   });
 
