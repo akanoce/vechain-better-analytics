@@ -5,7 +5,72 @@ import {
 import writeXlsxFile from "write-excel-file/node";
 import { XApp, getApps, getCurrentRoundId } from "./utils";
 
-const generateOverviewXlsData = async (
+const generateRoundsOverviewXlsData = async (
+  addressesWithVotes: Record<string, Record<string, DecodedCastVoteEvent>>,
+  roundsVotes: {
+    roundId: number;
+    votes: DecodedCastVoteEvent[];
+  }[]
+) => {
+  const headerRow = [
+    {
+      value: "Total votes cast",
+      fontWeight: "bold",
+    },
+    {
+      value: "Total voters",
+      fontWeight: "bold",
+    },
+    {
+      value: "Retention rate (%) - Compared to total number of voters",
+      fontWeight: "bold",
+    },
+  ];
+
+  const rows = roundsVotes.map((round) => {
+    const totalVotes = round.votes.reduce(
+      (prev, curr) =>
+        prev +
+        curr.formattedVoteWeights.reduce(
+          (prev, curr) => Number(prev) + Number(curr),
+          0
+        ),
+      0
+    );
+
+    const totalVoters = round.votes.length;
+    const retentionRate = (
+      (totalVoters / Object.keys(addressesWithVotes).length) *
+      100
+    ).toFixed(2);
+
+    return [
+      {
+        type: Number,
+        value: totalVotes,
+      },
+      {
+        type: Number,
+        value: totalVoters,
+      },
+      {
+        type: String,
+        value: retentionRate,
+      },
+    ];
+  });
+
+  const data = [headerRow, ...rows];
+  return data;
+};
+
+/**
+ *  Generate an overview of the users votes for each round
+ * @param addressesWithVotes  - Record<string, Record<string, DecodedCastVoteEvent>>
+ * @param rounds  - number[]
+ * @returns  - Promise<void>
+ */
+const generateUsersOverviewXlsData = async (
   addressesWithVotes: Record<string, Record<string, DecodedCastVoteEvent>>,
   rounds: number[]
 ) => {
@@ -49,6 +114,13 @@ const generateOverviewXlsData = async (
   return data;
 };
 
+/**
+ * Generate a sheet for every round with the votes of each user
+ * @param addressesWithVotes  - Record<string, Record<string, DecodedCastVoteEvent>>
+ * @param roundId  - number
+ * @param apps  - XApp[]
+ * @returns  - Promise<void>
+ */
 const generateRoundXlsData = async (
   addressesWithVotes: Record<string, Record<string, DecodedCastVoteEvent>>,
   roundId: number,
@@ -129,9 +201,17 @@ const generateRoundXlsData = async (
 const generateXlsFile = async (
   addressesWithVotes: Record<string, Record<string, DecodedCastVoteEvent>>,
   rounds: number[],
+  roundsVotes: {
+    roundId: number;
+    votes: DecodedCastVoteEvent[];
+  }[],
   apps: XApp[]
 ) => {
-  const overViewData = await generateOverviewXlsData(
+  const overViewData = await generateRoundsOverviewXlsData(
+    addressesWithVotes,
+    roundsVotes
+  );
+  const userOverviewData = await generateUsersOverviewXlsData(
     addressesWithVotes,
     rounds
   );
@@ -149,11 +229,12 @@ const generateXlsFile = async (
 
   await writeXlsxFile(
     //@ts-ignore
-    [overViewData, ...roundsRows.map((round) => round.data)],
+    [overViewData, userOverviewData, ...roundsRows.map((round) => round.data)],
     {
       filePath,
       sheets: [
-        "Overview",
+        "Rounds overview",
+        "Users overview",
         ...roundsRows.map((round) => `Round ${round.round}`),
       ],
     }
@@ -194,5 +275,5 @@ export const generateInsights = async () => {
     }
   }
 
-  await generateXlsFile(addressesWithVotes, allRounds, apps);
+  await generateXlsFile(addressesWithVotes, allRounds, roundsVotes, apps);
 };
