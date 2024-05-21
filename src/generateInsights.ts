@@ -59,6 +59,10 @@ const generateRoundXlsData = async (
       value: "Address",
       fontWeight: "bold",
     },
+    {
+      value: "Total Votes cast",
+      fontWeight: "bold",
+    },
     ...apps.map((app) => ({
       value: app.name,
       fontWeight: "bold",
@@ -86,12 +90,18 @@ const generateRoundXlsData = async (
         // @ts-ignore
       });
 
-      const newArray = [];
+      const totalVotes = userAppsVotes
+        .reduce((prev, curr) => prev + (curr.value ? Number(curr.value) : 0), 0)
+        .toString();
 
       roundUserAppsVotes.push([
         {
           type: String,
           value: address,
+        },
+        {
+          type: String,
+          value: totalVotes,
         },
         ...userAppsVotes,
       ]);
@@ -100,6 +110,10 @@ const generateRoundXlsData = async (
         {
           type: String,
           value: address,
+        },
+        {
+          type: Number,
+          value: 0,
         },
         ...apps.map((app) => ({
           type: Number,
