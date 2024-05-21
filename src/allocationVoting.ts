@@ -37,7 +37,7 @@ export const filterAllocationVotes = async (
     // Additional options for the query, such as offset and limit
     options: {
       offset: 0,
-      limit: 1024,
+      limit: 10000000,
     },
     // Define criteria for filtering events
     criteriaSet: [
