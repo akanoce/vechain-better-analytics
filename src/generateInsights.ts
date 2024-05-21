@@ -103,7 +103,7 @@ const generateRoundXlsData = async (
         },
         ...apps.map((app) => ({
           type: Number,
-          value: 0,
+          value: undefined,
         })),
       ]);
     }
