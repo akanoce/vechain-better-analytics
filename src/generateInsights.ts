@@ -14,6 +14,10 @@ const generateRoundsOverviewXlsData = async (
 ) => {
   const headerRow = [
     {
+      value: "Round Id",
+      fontWeight: "bold",
+    },
+    {
       value: "Total votes cast",
       fontWeight: "bold",
     },
@@ -45,6 +49,11 @@ const generateRoundsOverviewXlsData = async (
     ).toFixed(2);
 
     return [
+      {
+        type: Number,
+        value: round.roundId,
+        fontWeight: "bold",
+      },
       {
         type: Number,
         value: totalVotes,
