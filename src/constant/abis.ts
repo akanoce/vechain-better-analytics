@@ -52,3 +52,29 @@ export const AllocationVoteCastAbi = {
   name: "AllocationVoteCast",
   type: "event",
 };
+
+export const VoterRewardsClaimedAbi = {
+  anonymous: false,
+  inputs: [
+    {
+      indexed: true,
+      internalType: "uint256",
+      name: "cycle",
+      type: "uint256",
+    },
+    {
+      indexed: true,
+      internalType: "address",
+      name: "voter",
+      type: "address",
+    },
+    {
+      indexed: false,
+      internalType: "uint256",
+      name: "reward",
+      type: "uint256",
+    },
+  ],
+  name: "RewardClaimed",
+  type: "event",
+};
