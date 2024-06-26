@@ -1,8 +1,10 @@
 //X2EARN APPS
 export const mugshotTreasuryAddress =
   "0xbfE2122a82C0AEa091514f57C7713C3118101eDa";
-export const mugshotContractAddress =
-  "0x853a8b51a47649fc73361f4cf02669e8815ac18c";
+export const mugshotNewContractAddress =
+  "0xa43224C7388f0eCD89D9deC6Ff6464a875E2D67E";
+export const mugshotOldContractAddress =
+  "0xc208632f2054b909cc1898f10b5d3d7cab459371";
 export const cleanifyTreasuryAddress =
   "0x6b020e5c8e8574388a275cc498b27e3eb91ec3f2";
 export const cleanifyCampaignsContractAddress =

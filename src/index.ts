@@ -3,16 +3,19 @@ import { filterTransfers } from "./transfers";
 import { filterAllocationVotes } from "./allocationVoting";
 import { generateInsights } from "./generateInsights";
 import { resolveCommonAddresses } from "./utils/resolveCommonAddresses";
+import { lookupDappsInteractions } from "./lookupDappsInteractions";
 
 const argv = yargs(process.argv.slice(2))
   .options({
     transfers: { type: "boolean", demandOption: false },
     votes: { type: "boolean", demandOption: false },
     insights: { type: "boolean", demandOption: false },
+    dappInteractions: { type: "boolean", demandOption: false },
     f: { type: "string", alias: "from" },
     t: { type: "string", alias: "to" },
     r: { type: "number", alias: "round" },
     v: { type: "string", alias: "voter" },
+    a: { type: "string", alias: "address" },
   })
   .parseSync();
 
@@ -30,7 +33,13 @@ const main = async () => {
     console.log("Transfers flag is set");
     const from = resolveCommonAddresses(argv.f);
     const to = resolveCommonAddresses(argv.t);
-    filterTransfers(from, to);
+    const { totalTransferred, sortedTransfers } = await filterTransfers(
+      from,
+      to
+    );
+
+    console.log("Total transferred:", totalTransferred);
+    console.log("Top 10 transfers:", sortedTransfers.slice(0, 10));
   }
 
   if (argv.insights) {
@@ -47,6 +56,30 @@ const main = async () => {
     console.log("Total votes casted:", totalVotesCasted);
     console.log("Top 10 voters:", formattedDecoded.slice(0, 10));
     console.log("Apps Insights:", appsInsights);
+  }
+
+  if (argv.dappInteractions) {
+    console.log("dappInteractions flag is set");
+    if (!argv.a?.length)
+      throw new Error("Please provide an address to filter dapp interactions");
+
+    const { mugshotTransfers, cleanifyTransfers, greencartTransfers } =
+      await lookupDappsInteractions(argv.a);
+
+    console.log({
+      mugshot: {
+        transfers: mugshotTransfers.transfers.length,
+        totalTransferred: mugshotTransfers.totalTransferred,
+      },
+      cleanify: {
+        transfers: cleanifyTransfers.transfers.length,
+        totalTransferred: cleanifyTransfers.totalTransferred,
+      },
+      greencart: {
+        transfers: greencartTransfers.transfers.length,
+        totalTransferred: greencartTransfers.totalTransferred,
+      },
+    });
   }
 };
 

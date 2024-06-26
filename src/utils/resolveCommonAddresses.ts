@@ -3,7 +3,7 @@ import {
   cleanifyCampaignsContractAddress,
   cleanifyDailyContractAddress,
   cleanifyTreasuryAddress,
-  mugshotContractAddress,
+  mugshotNewContractAddress,
   mugshotTreasuryAddress,
   vyvoTreasuryAddress,
 } from "../constant";
@@ -18,7 +18,7 @@ export const resolveCommonAddresses = (nameOrAddress?: string) => {
     case "mugshot_treasury":
       return mugshotTreasuryAddress;
     case "mugshot_contract":
-      return mugshotContractAddress;
+      return mugshotNewContractAddress;
     case "cleanify_treasury":
       return cleanifyTreasuryAddress;
     case "cleanify_campaigns":
