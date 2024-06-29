@@ -78,3 +78,23 @@ export const VoterRewardsClaimedAbi = {
   name: "RewardClaimed",
   type: "event",
 };
+
+export const CleanifyChallengeAddedEvent = {
+  anonymous: false,
+  inputs: [
+    {
+      indexed: true,
+      internalType: "uint256",
+      name: "challengeId",
+      type: "uint256",
+    },
+    {
+      indexed: true,
+      internalType: "address",
+      name: "user",
+      type: "address",
+    },
+  ],
+  name: "ChallengeAdded",
+  type: "event",
+};

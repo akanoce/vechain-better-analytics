@@ -17,6 +17,9 @@ export const greenCartContractAddress =
   "0x01d93001de7e05aebb88e9359b07b4c78e2ca571";
 export const vyvoTreasuryAddress = "0x61ffc950b04090f5ce857ebf056852a6d27b0c3c";
 
+export const greenAmbassadorAddress =
+  "0x2cd79a3f25b90f97280e271e80aaf8759253de82";
+
 export const b3trTreasuryAddress = "0xee9c67d01c630bf62b82f3ae81fdc63f261b52a0";
 
 //B3TR contracts

@@ -63,8 +63,13 @@ const main = async () => {
     if (!argv.a?.length)
       throw new Error("Please provide an address to filter dapp interactions");
 
-    const { mugshotTransfers, cleanifyTransfers, greencartTransfers } =
-      await lookupDappsInteractions(argv.a);
+    const {
+      mugshotTransfers,
+      cleanifyTransfers,
+      cleanifyNewDailyEvents,
+      greencartTransfers,
+      greenAmbassadorTransfers,
+    } = await lookupDappsInteractions(argv.a);
 
     console.log({
       mugshot: {
@@ -74,10 +79,15 @@ const main = async () => {
       cleanify: {
         transfers: cleanifyTransfers.transfers.length,
         totalTransferred: cleanifyTransfers.totalTransferred,
+        dailys: cleanifyNewDailyEvents.length,
       },
       greencart: {
         transfers: greencartTransfers.transfers.length,
         totalTransferred: greencartTransfers.totalTransferred,
+      },
+      greenAmbassador: {
+        transfers: greenAmbassadorTransfers.transfers.length,
+        totalTransferred: greenAmbassadorTransfers.totalTransferred,
       },
     });
   }

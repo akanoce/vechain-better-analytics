@@ -1,10 +1,12 @@
 import {
   cleanifyDailyContractAddress,
+  greenAmbassadorAddress,
   greenCartContractAddress,
   mugshotNewContractAddress,
   mugshotOldContractAddress,
 } from "./constant";
 import { filterTransfers } from "./transfers";
+import { filterCleanifyDailys } from "./utils/filterCleanifyDailys";
 
 /**
  *  Lookup all the dApp interactions for an address
@@ -20,12 +22,16 @@ export const lookupDappsInteractions = async (address: string) => {
     mugshotOldTransfers,
     musghotNewTransfers,
     cleanifyTransfers,
+    cleanifyNewDailyEvents,
     greencartTransfers,
+    greenAmbassadorTransfers,
   ] = await Promise.all([
     filterTransfers(mugshotOldContractAddress, address),
     filterTransfers(mugshotNewContractAddress, address),
     filterTransfers(cleanifyDailyContractAddress, address),
+    filterCleanifyDailys(address),
     filterTransfers(greenCartContractAddress, address),
+    filterTransfers(greenAmbassadorAddress, address),
   ]);
 
   const mugshotTransfers = {
@@ -45,6 +51,8 @@ export const lookupDappsInteractions = async (address: string) => {
   return {
     mugshotTransfers,
     cleanifyTransfers,
+    cleanifyNewDailyEvents,
     greencartTransfers,
+    greenAmbassadorTransfers,
   };
 };
