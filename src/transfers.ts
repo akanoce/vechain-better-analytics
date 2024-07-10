@@ -53,29 +53,30 @@ export const filterTransfers = async (
   //   console.log("Event logs:", eventLogs.length);
 
   const decoded = eventLogs.map((log) => {
-    return transferEvent.decodeEventLog({ data: log.data, topics: log.topics });
-  });
-
-  const mapDecoded = decoded.map((log) => {
+    const decoded = transferEvent.decodeEventLog({
+      data: log.data,
+      topics: log.topics,
+    });
     return {
-      from: log._from,
-      to: log._to,
-      value: log._value.toString(),
-      formattedValue: unitsUtils.formatUnits(log._value.toString(), 18),
+      from: decoded._from,
+      to: decoded._to,
+      value: decoded._value,
+      formattedValue: unitsUtils.formatUnits(decoded._value.toString(), 18),
+      meta: log.meta,
     };
   });
 
-  const totalTransferred = mapDecoded.reduce((acc, log) => {
+  const totalTransferred = decoded.reduce((acc, log) => {
     return acc + parseFloat(log.formattedValue);
   }, 0);
 
-  const sortedTransfers = mapDecoded.toSorted((a, b) => {
+  const sortedTransfers = decoded.toSorted((a, b) => {
     return parseFloat(b.value) - parseFloat(a.value);
   });
 
   return {
     totalTransferred,
-    transfers: mapDecoded,
+    transfers: decoded,
     sortedTransfers,
   };
 };

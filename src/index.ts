@@ -3,7 +3,7 @@ import { filterTransfers } from "./transfers";
 import { filterAllocationVotes } from "./allocationVoting";
 import { generateInsights } from "./generateInsights";
 import { resolveCommonAddresses } from "./utils/resolveCommonAddresses";
-import { lookupDappsInteractions } from "./lookupDappsInteractions";
+import { generateStreakXls } from "./utils/generateStreakXls";
 
 const argv = yargs(process.argv.slice(2))
   .options({
@@ -15,7 +15,7 @@ const argv = yargs(process.argv.slice(2))
     t: { type: "string", alias: "to" },
     r: { type: "number", alias: "round" },
     v: { type: "string", alias: "voter" },
-    a: { type: "string", alias: "address" },
+    a: { type: "string", alias: "address", number: false, array: true },
   })
   .parseSync();
 
@@ -63,33 +63,8 @@ const main = async () => {
     if (!argv.a?.length)
       throw new Error("Please provide an address to filter dapp interactions");
 
-    const {
-      mugshotTransfers,
-      cleanifyTransfers,
-      cleanifyNewDailyEvents,
-      greencartTransfers,
-      greenAmbassadorTransfers,
-    } = await lookupDappsInteractions(argv.a);
-
-    console.log({
-      mugshot: {
-        transfers: mugshotTransfers.transfers.length,
-        totalTransferred: mugshotTransfers.totalTransferred,
-      },
-      cleanify: {
-        transfers: cleanifyTransfers.transfers.length,
-        totalTransferred: cleanifyTransfers.totalTransferred,
-        dailys: cleanifyNewDailyEvents.length,
-      },
-      greencart: {
-        transfers: greencartTransfers.transfers.length,
-        totalTransferred: greencartTransfers.totalTransferred,
-      },
-      greenAmbassador: {
-        transfers: greenAmbassadorTransfers.transfers.length,
-        totalTransferred: greenAmbassadorTransfers.totalTransferred,
-      },
-    });
+    const addresses = argv.a.map((address) => address.toString());
+    await generateStreakXls(addresses);
   }
 };
 
