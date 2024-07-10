@@ -70,12 +70,27 @@ export const filterTransfers = async (
     return acc + parseFloat(log.formattedValue);
   }, 0);
 
+  const avgTransferred = totalTransferred / decoded.length;
+
+  const uniqueAddressesTo = decoded.reduce((acc, log) => {
+    if (!acc.includes(log.to)) acc.push(log.to);
+    return acc;
+  }, [] as string[]);
+
+  const uniqueAddressesFrom = decoded.reduce((acc, log) => {
+    if (!acc.includes(log.from)) acc.push(log.from);
+    return acc;
+  }, [] as string[]);
+
   const sortedTransfers = decoded.toSorted((a, b) => {
     return parseFloat(b.value) - parseFloat(a.value);
   });
 
   return {
     totalTransferred,
+    avgTransferred,
+    uniqueAddressesFrom,
+    uniqueAddressesTo,
     transfers: decoded,
     sortedTransfers,
   };

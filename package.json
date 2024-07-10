@@ -16,6 +16,7 @@
     "@vechain/sdk-core": "^1.0.0-beta.1",
     "@vechain/sdk-network": "^1.0.0-beta.1",
     "@vechain/sdk-provider": "^1.0.0-beta.1",
+    "cli-table3": "^0.6.5",
     "dayjs": "^1.11.11",
     "enquirer": "^2.4.1",
     "fast-json-stable-stringify": "^2.1.0",

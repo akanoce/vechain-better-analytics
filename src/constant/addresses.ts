@@ -28,3 +28,50 @@ export const xAllocationVotingAddress =
   "0x90c1a329e11CE6429eeF0ab9b8f7DAaB68694e7d";
 
 export const voterRewardsAddress = "0x2D0EfF77e390cff063E0567A7735c904cBC4D1cf";
+
+export const commonAddressesWithNameMapping = [
+  {
+    message: "Mugshot Treasury",
+    name: mugshotTreasuryAddress,
+  },
+  {
+    message: "Mugshot Contract (NEW)",
+    name: mugshotNewContractAddress,
+  },
+  {
+    message: "Mugshot Contract (OLD)",
+    name: mugshotNewContractAddress,
+  },
+  {
+    message: "Cleanify Treasury",
+    name: cleanifyTreasuryAddress,
+  },
+  {
+    message: "Cleanify Campaigns",
+    name: cleanifyCampaignsContractAddress,
+  },
+  {
+    message: "Cleanify Daily",
+    name: cleanifyDailyContractAddress,
+  },
+  {
+    message: "GreenCart Treasury",
+    name: greenCartTreasuryAddress,
+  },
+  {
+    message: "GreenCart Contract",
+    name: greenCartContractAddress,
+  },
+  {
+    message: "Vyvo Treasury",
+    name: vyvoTreasuryAddress,
+  },
+  {
+    message: "Green Ambassador",
+    name: greenAmbassadorAddress,
+  },
+  {
+    message: "Treasury",
+    name: b3trTreasuryAddress,
+  },
+];

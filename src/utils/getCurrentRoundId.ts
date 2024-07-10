@@ -8,6 +8,8 @@ const xAllocationContract = thorClient.contracts.load(
 );
 
 export const getCurrentRoundId = async () => {
-  const currentRoundId = (await xAllocationContract.read.currentRoundId())[0];
-  return currentRoundId;
+  const currentRoundId = (
+    await xAllocationContract.read.currentRoundId()
+  )[0] as BigInt;
+  return currentRoundId.toString();
 };

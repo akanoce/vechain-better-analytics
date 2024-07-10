@@ -1,7 +1,7 @@
 import {
   DecodedCastVoteEvent,
   filterAllocationVotes,
-} from "./allocationVoting";
+} from "./utils/filterAllocationVotes";
 import writeXlsxFile from "write-excel-file/node";
 import { XApp, getApps, getCurrentRoundId } from "./utils";
 

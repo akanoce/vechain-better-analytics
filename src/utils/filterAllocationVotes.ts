@@ -1,7 +1,7 @@
 import { abi, unitsUtils } from "@vechain/sdk-core";
-import { xAllocationVotingAddress } from "./constant/addresses";
-import { AllocationVoteCastAbi } from "./constant";
-import { XApp, getApps, thorClient } from "./utils";
+import { xAllocationVotingAddress } from "../constant/addresses";
+import { AllocationVoteCastAbi } from "../constant";
+import { XApp, getApps, thorClient } from ".";
 
 const eventFragment = new abi.Event(AllocationVoteCastAbi);
 

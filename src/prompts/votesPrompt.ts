@@ -1,0 +1,74 @@
+import { getCurrentRoundId } from "../utils";
+import { promptAddress } from "./common/promptAddress";
+import { filterAllocationVotes } from "../utils/filterAllocationVotes";
+import { promptRoundId } from "./common/promptRoundId";
+import Table from "cli-table3";
+
+const { Select } = require("enquirer");
+
+/**
+ *  This function is used to prompt the user for for a specific round and for a specific user, in order to generate statistics about the votes
+ */
+export const votesPrompt = async () => {
+  const currentRound = await getCurrentRoundId();
+  const rounds = Array.from({ length: Number(currentRound) }, (_, i) => i + 1);
+
+  const whatPrompt = new Select({
+    name: "whichRound",
+    message: "What are you looking for?",
+    choices: [
+      {
+        message: "App votes insights",
+        name: "appVotes",
+      },
+      {
+        message: "Voter votes insights",
+        name: "voterVotes",
+      },
+    ],
+  });
+
+  const what = await whatPrompt.run();
+
+  if (what === "appVotes") {
+    const roundId = await promptRoundId(rounds);
+    const { appsInsights } = await filterAllocationVotes(roundId);
+    console.log("Apps insights:", "\n ------- ");
+    console.log(generateAppInsightsTable(appsInsights));
+  }
+
+  if (what === "voterVotes") {
+    const roundId = await promptRoundId(rounds, currentRound);
+    const voter = await promptAddress("Looking for a specific voter?");
+
+    const { sortedVotes, totalVotesCasted } = await filterAllocationVotes(
+      roundId,
+      voter
+    );
+
+    console.log("Total votes casted:", totalVotesCasted);
+    console.log("\n ------- ");
+    console.log("Votes:", sortedVotes);
+  }
+};
+
+const generateAppInsightsTable = (
+  appsInsights: Awaited<
+    ReturnType<typeof filterAllocationVotes>
+  >["appsInsights"]
+) => {
+  const table = new Table({
+    head: ["Name", "TotalVotes", "Voters", "PreferredByVoters"],
+  });
+
+  for (const app of appsInsights) {
+    table.push([
+      app.name,
+      `${app.totalVotes} (${app.totalVotesPercentage}%)`,
+      `${app.numberOfVoters} (${app.numberOfVotersPercentage}%)`,
+      `${app.numberOfPreferredVotesPercentage} (${app.numberOfPreferredVotesPercentage}%)`,
+    ]);
+  }
+
+  return table.toString();
+};
