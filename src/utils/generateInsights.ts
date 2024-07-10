@@ -1,9 +1,9 @@
 import {
   DecodedCastVoteEvent,
   filterAllocationVotes,
-} from "./utils/filterAllocationVotes";
+} from "./filterAllocationVotes";
 import writeXlsxFile from "write-excel-file/node";
-import { XApp, getApps, getCurrentRoundId } from "./utils";
+import { XApp, getApps, getCurrentRoundId } from ".";
 
 const generateRoundsOverviewXlsData = async (
   addressesWithVotes: Record<string, Record<string, DecodedCastVoteEvent>>,
@@ -208,6 +208,7 @@ const generateRoundXlsData = async (
 };
 
 const generateXlsFile = async (
+  filePath: string,
   addressesWithVotes: Record<string, Record<string, DecodedCastVoteEvent>>,
   rounds: number[],
   roundsVotes: {
@@ -234,7 +235,6 @@ const generateXlsFile = async (
     );
     roundsRows.push({ round, data: roundXlsData });
   }
-  const filePath = "./vebetterdao_insights.xlsx";
 
   await writeXlsxFile(
     //@ts-ignore
@@ -250,7 +250,9 @@ const generateXlsFile = async (
   );
 };
 
-export const generateInsights = async () => {
+export const generateInsights = async (
+  filePath = "./vebetterdao_insights.xlsx"
+) => {
   const apps = await getApps();
   const currentRoundId = await getCurrentRoundId();
   const allRounds = Array.from(
@@ -284,5 +286,11 @@ export const generateInsights = async () => {
     }
   }
 
-  await generateXlsFile(addressesWithVotes, allRounds, roundsVotes, apps);
+  await generateXlsFile(
+    filePath,
+    addressesWithVotes,
+    allRounds,
+    roundsVotes,
+    apps
+  );
 };

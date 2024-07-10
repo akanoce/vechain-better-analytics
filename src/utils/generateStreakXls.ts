@@ -59,7 +59,10 @@ export const getNumberOfActionsPerDay = async (address: string) => {
   return dayActionMap;
 };
 
-export const generateStreakXls = async (addresses: string[]) => {
+export const generateStreakXls = async (
+  addresses: string[],
+  filePath = "./streak.xlsx"
+) => {
   const actionsPerDay = await Promise.all(
     addresses.map((address) => {
       return getNumberOfActionsPerDay(address);
@@ -131,6 +134,6 @@ export const generateStreakXls = async (addresses: string[]) => {
   const data = [headerRow, ...rows];
 
   await writeXlsxFile(data, {
-    filePath: "./streak.xlsx",
+    filePath,
   });
 };

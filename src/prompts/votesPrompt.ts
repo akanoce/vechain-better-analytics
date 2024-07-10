@@ -11,24 +11,45 @@ const { Select } = require("enquirer");
  */
 export const votesPrompt = async () => {
   const currentRound = await getCurrentRoundId();
-  const rounds = Array.from({ length: Number(currentRound) }, (_, i) => i + 1);
+  const rounds = Array.from(
+    { length: Number(currentRound) },
+    (_, i) => i + 1
+  ).sort((a, b) => b - a);
 
   const whatPrompt = new Select({
     name: "whichRound",
     message: "What are you looking for?",
     choices: [
       {
-        message: "App votes insights",
+        message: "Voting round insights",
+        name: "votingRound",
+      },
+      {
+        message: "Apps insights",
         name: "appVotes",
       },
       {
-        message: "Voter votes insights",
+        message: "Voter insights",
         name: "voterVotes",
       },
     ],
   });
 
   const what = await whatPrompt.run();
+
+  if (what === "votingRound") {
+    const roundId = await promptRoundId(rounds);
+    const { totalVotesCasted, formattedDecoded, appsInsights } =
+      await filterAllocationVotes(roundId);
+
+    console.log("Top 10 voters:", formattedDecoded.slice(0, 10));
+    console.log("Total votes casted:", totalVotesCasted);
+    console.log(
+      "Average votes per voter:",
+      totalVotesCasted / formattedDecoded.length
+    );
+    console.log("Apps Insights:", appsInsights);
+  }
 
   if (what === "appVotes") {
     const roundId = await promptRoundId(rounds);

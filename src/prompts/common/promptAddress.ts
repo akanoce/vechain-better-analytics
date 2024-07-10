@@ -14,9 +14,12 @@ const { Select, Input } = require("enquirer");
  */
 export const promptAddress = async (
   message = "Select an address",
+  type: "withCommon" | "custom" = "withCommon",
   anyoneAllowed = true,
   customAddressAllowed = true
-) => {
+): Promise<string | undefined> => {
+  if (type === "custom") return promptForCustomAddress(message);
+
   const commonAddressPrompt = new Select({
     name: "fromChoice",
     message: message,
@@ -32,18 +35,22 @@ export const promptAddress = async (
 
   if (result === "any") return undefined;
 
-  if (result === "custom") {
-    while (true) {
-      const customAddressPrompt = new Input({
-        message: "Enter the address",
-        initial: "0x",
-      });
-
-      const res = await customAddressPrompt.run();
-      if (addressUtils.isAddress(res)) return res;
-      console.log("Invalid address, please try again");
-    }
-  }
+  if (result === "custom") return promptForCustomAddress("Enter the address");
 
   return result;
+};
+
+const promptForCustomAddress = async (
+  message: string = "Enter the address"
+) => {
+  while (true) {
+    const customAddressPrompt = new Input({
+      message,
+      initial: "0x",
+    });
+
+    const res = await customAddressPrompt.run();
+    if (addressUtils.isAddress(res)) return res;
+    console.log("Invalid address, please try again");
+  }
 };
