@@ -1,11 +1,7 @@
 import { abi, unitsUtils } from "@vechain/sdk-core";
-import { HttpClient, ThorClient } from "@vechain/sdk-network";
 import { b3trContractAddress } from "./constant/addresses";
 import { TranferEventAbi } from "./constant";
-
-const _testnetUrl = "https://testnet.vechain.org";
-const testNetwork = new HttpClient(_testnetUrl);
-const thorClient = new ThorClient(testNetwork);
+import { thorClient } from "./utils";
 
 const transferEvent = new abi.Event(TranferEventAbi);
 
