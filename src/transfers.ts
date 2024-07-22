@@ -1,14 +1,37 @@
 import { abi, unitsUtils } from "@vechain/sdk-core";
-import { b3trContractAddress } from "./constant/addresses";
-import { TranferEventAbi } from "./constant";
-import { thorClient } from "./utils";
+import { getCommonAddresses, TranferEventAbi } from "./constant";
+import { EventLogs, ThorClient } from "@vechain/sdk-network";
 
 const transferEvent = new abi.Event(TranferEventAbi);
 
+export type FilterTransfersReturnType = {
+  totalTransferred: number;
+  avgTransferred: number;
+  uniqueAddressesFrom: string[];
+  uniqueAddressesTo: string[];
+  transfers: {
+    from: string;
+    to: string;
+    value: string;
+    formattedValue: string;
+    meta: EventLogs["meta"];
+  }[];
+  sortedTransfers: {
+    from: string;
+    to: string;
+    value: string;
+    formattedValue: string;
+    meta: EventLogs["meta"];
+  }[];
+  key?: string;
+};
 export const filterTransfers = async (
+  thorClient: ThorClient,
   fromAddress?: string,
-  toAddress?: string
-) => {
+  toAddress?: string,
+  key?: string
+): Promise<FilterTransfersReturnType> => {
+  const { b3trContractAddress } = getCommonAddresses(thorClient);
   const currentBlock = await thorClient.blocks.getBestBlockCompressed();
 
   const transferTopics = transferEvent.encodeFilterTopics([
@@ -89,5 +112,6 @@ export const filterTransfers = async (
     uniqueAddressesTo,
     transfers: decoded,
     sortedTransfers,
+    ...(!!key && { key }),
   };
 };

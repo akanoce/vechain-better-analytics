@@ -1,6 +1,6 @@
-import { xAllocationVotingAddress } from "../constant";
-import { thorClient } from "./thor";
+import { getCommonAddresses } from "../constant";
 import XAllocationVotingAbi from "../abis/XAllocationVoting.json";
+import { ThorClient } from "@vechain/sdk-network";
 
 export type XApp = {
   id: string;
@@ -9,12 +9,13 @@ export type XApp = {
   createdAt: number;
 };
 
-const xAllocationContract = thorClient.contracts.load(
-  xAllocationVotingAddress,
-  XAllocationVotingAbi.abi
-);
+export const getApps = async (thorClient: ThorClient) => {
+  const { xAllocationVotingAddress } = getCommonAddresses(thorClient);
+  const xAllocationContract = thorClient.contracts.load(
+    xAllocationVotingAddress,
+    XAllocationVotingAbi.abi
+  );
 
-export const getApps = async () => {
   const apps = (await xAllocationContract.read.getAllApps())[0];
   const parsedXApps: XApp[] = apps.map((app: any) => {
     return {

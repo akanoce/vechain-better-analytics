@@ -3,14 +3,15 @@ import { promptAddress } from "./common/promptAddress";
 import { filterAllocationVotes } from "../utils/filterAllocationVotes";
 import { promptRoundId } from "./common/promptRoundId";
 import Table from "cli-table3";
+import { ThorClient } from "@vechain/sdk-network";
 
 const { Select } = require("enquirer");
 
 /**
  *  This function is used to prompt the user for for a specific round and for a specific user, in order to generate statistics about the votes
  */
-export const votesPrompt = async () => {
-  const currentRound = await getCurrentRoundId();
+export const votesPrompt = async (thorClient: ThorClient) => {
+  const currentRound = await getCurrentRoundId(thorClient);
   const rounds = Array.from(
     { length: Number(currentRound) },
     (_, i) => i + 1
@@ -60,9 +61,13 @@ export const votesPrompt = async () => {
 
   if (what === "voterVotes") {
     const roundId = await promptRoundId(rounds, currentRound);
-    const voter = await promptAddress("Looking for a specific voter?");
+    const voter = await promptAddress(
+      thorClient,
+      "Looking for a specific voter?"
+    );
 
     const { sortedVotes, totalVotesCasted } = await filterAllocationVotes(
+      thorClient,
       roundId,
       voter
     );

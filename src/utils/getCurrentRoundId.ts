@@ -1,13 +1,15 @@
-import { xAllocationVotingAddress } from "../constant";
-import { thorClient } from "./thor";
+import { getCommonAddresses } from "../constant";
 import XAllocationVotingAbi from "../abis/XAllocationVoting.json";
+import { ThorClient } from "@vechain/sdk-network";
 
-const xAllocationContract = thorClient.contracts.load(
-  xAllocationVotingAddress,
-  XAllocationVotingAbi.abi
-);
+export const getCurrentRoundId = async (thorClient: ThorClient) => {
+  const { xAllocationVotingAddress } = getCommonAddresses(thorClient);
 
-export const getCurrentRoundId = async () => {
+  const xAllocationContract = thorClient.contracts.load(
+    xAllocationVotingAddress,
+    XAllocationVotingAbi.abi
+  );
+
   const currentRoundId = (
     await xAllocationContract.read.currentRoundId()
   )[0] as BigInt;

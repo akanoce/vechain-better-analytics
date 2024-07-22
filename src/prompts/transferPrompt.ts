@@ -1,3 +1,4 @@
+import { ThorClient } from "@vechain/sdk-network";
 import { filterTransfers } from "../transfers";
 import { promptAddress } from "./common/promptAddress";
 const { Select } = require("enquirer");
@@ -5,9 +6,9 @@ const { Select } = require("enquirer");
 /**
  *  This function is used to prompt the user for the transfer details and then call the filterTransfers function
  */
-export const transfersPrompt = async () => {
-  const fromAddress = await promptAddress("From who?");
-  const toAddress = await promptAddress("To who?");
+export const transfersPrompt = async (thorClient: ThorClient) => {
+  const fromAddress = await promptAddress(thorClient, "From who?");
+  const toAddress = await promptAddress(thorClient, "To who?");
 
   const whatToSeePrompt = new Select({
     name: "whatToSee",
@@ -20,7 +21,11 @@ export const transfersPrompt = async () => {
 
   const result = await whatToSeePrompt.run();
 
-  const filterTransfersResult = await filterTransfers(fromAddress, toAddress);
+  const filterTransfersResult = await filterTransfers(
+    thorClient,
+    fromAddress,
+    toAddress
+  );
 
   if (result === "stats") return generateStats(filterTransfersResult);
 

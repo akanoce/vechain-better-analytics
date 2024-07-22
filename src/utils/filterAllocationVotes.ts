@@ -1,7 +1,7 @@
 import { abi, unitsUtils } from "@vechain/sdk-core";
-import { xAllocationVotingAddress } from "../constant/addresses";
-import { AllocationVoteCastAbi } from "../constant";
-import { XApp, getApps, thorClient } from ".";
+import { AllocationVoteCastAbi, getCommonAddresses } from "../constant";
+import { XApp, getApps } from ".";
+import { ThorClient } from "@vechain/sdk-network";
 
 const eventFragment = new abi.Event(AllocationVoteCastAbi);
 
@@ -14,10 +14,12 @@ export type DecodedCastVoteEvent = {
 };
 
 export const filterAllocationVotes = async (
+  thorClient: ThorClient,
   roundId?: number,
   voter?: string
 ) => {
-  const apps = await getApps();
+  const { xAllocationVotingAddress } = getCommonAddresses(thorClient);
+  const apps = await getApps(thorClient);
   const appsMapping: Record<string, XApp> = {};
 
   for (const app of apps) {

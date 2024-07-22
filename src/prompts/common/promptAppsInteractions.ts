@@ -1,16 +1,18 @@
 import { promptAddress } from "./promptAddress";
 import { generateStreakXls } from "../../utils/generateStreakXls";
+import { ThorClient } from "@vechain/sdk-network";
 const { Toggle, Input } = require("enquirer");
 
 /**
  * Prompt the user to select an user to generate insights about the apps interactions
  *
  */
-export const promptAppsInteractions = async () => {
+export const promptAppsInteractions = async (thorClient: ThorClient) => {
   const addresses = [];
   let askForMore = true;
   while (askForMore) {
     const address = await promptAddress(
+      thorClient,
       "Enter the address",
       "custom",
       false,
@@ -34,5 +36,5 @@ export const promptAppsInteractions = async () => {
   });
   const filePath = await filePathprompt.run();
 
-  await generateStreakXls(addresses, filePath);
+  await generateStreakXls(thorClient, addresses, filePath);
 };

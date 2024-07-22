@@ -1,58 +1,52 @@
-import {
-  cleanifyDailyContractAddress,
-  greenAmbassadorAddress,
-  greenCartContractAddress,
-  mugshotNewContractAddress,
-  mugshotOldContractAddress,
-} from "./constant";
-import { filterTransfers } from "./transfers";
-import { filterCleanifyDailys } from "./utils/filterCleanifyDailys";
+import { ThorClient } from "@vechain/sdk-network";
+import { getCommonAddresses } from "./constant";
+import { filterTransfers, FilterTransfersReturnType } from "./transfers";
 
 /**
  *  Lookup all the dApp interactions for an address
  *  @param {string[]} address - Address to filter dApp interactions
  *
  */
-export const lookupDappsInteractions = async (address: string) => {
+export const lookupDappsInteractions = async (
+  thorClient: ThorClient,
+  address: string
+): Promise<Record<string, FilterTransfersReturnType>> => {
   // promise all of all the addresses
 
   // filter all the transfers for each address
 
-  const [
-    mugshotOldTransfers,
-    musghotNewTransfers,
-    cleanifyTransfers,
-    cleanifyNewDailyEvents,
-    greencartTransfers,
-    greenAmbassadorTransfers,
-  ] = await Promise.all([
-    filterTransfers(mugshotOldContractAddress, address),
-    filterTransfers(mugshotNewContractAddress, address),
-    filterTransfers(cleanifyDailyContractAddress, address),
-    filterCleanifyDailys(address),
-    filterTransfers(greenCartContractAddress, address),
-    filterTransfers(greenAmbassadorAddress, address),
-  ]);
+  const { commonAddresses } = getCommonAddresses(thorClient);
 
-  const mugshotTransfers = {
-    totalTransferred:
-      mugshotOldTransfers.totalTransferred +
-      musghotNewTransfers.totalTransferred,
-    transfers: [
-      ...mugshotOldTransfers.transfers,
-      ...musghotNewTransfers.transfers,
-    ],
-    sortedTransfers: [
-      ...mugshotOldTransfers.sortedTransfers,
-      ...musghotNewTransfers.sortedTransfers,
-    ],
-  };
+  const transfers = await Promise.all(
+    commonAddresses
+      .map((comm) =>
+        comm.contracts.map((contract) =>
+          filterTransfers(thorClient, contract.address, address, comm.name)
+        )
+      )
+      .flat()
+  );
 
-  return {
-    mugshotTransfers,
-    cleanifyTransfers,
-    cleanifyNewDailyEvents,
-    greencartTransfers,
-    greenAmbassadorTransfers,
-  };
+  // merge data based on keys and return
+
+  // Map name: FilterTransfersReturnType => Cleanify: FilterTransfersReturnType
+  let result: Record<string, FilterTransfersReturnType> = {};
+
+  commonAddresses.forEach((comm, index) => {
+    if (!result[comm.name]) {
+      result[comm.name] = transfers[index];
+    } else {
+      result[comm.name].totalTransferred += transfers[index].totalTransferred;
+      result[comm.name].transfers = [
+        ...result[comm.name].transfers,
+        ...transfers[index].transfers,
+      ];
+      result[comm.name].sortedTransfers = [
+        ...result[comm.name].sortedTransfers,
+        ...transfers[index].sortedTransfers,
+      ];
+    }
+  });
+
+  return result;
 };

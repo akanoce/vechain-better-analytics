@@ -20,6 +20,7 @@
     "dayjs": "^1.11.11",
     "enquirer": "^2.4.1",
     "fast-json-stable-stringify": "^2.1.0",
+    "tsc-alias": "^1.8.10",
     "write-excel-file": "^1.4.30"
   }
 }

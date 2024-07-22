@@ -2,11 +2,25 @@ import { transfersPrompt } from "./prompts/transferPrompt";
 import { votesPrompt } from "./prompts/votesPrompt";
 import { promptInsights } from "./prompts/common/promptInsights";
 import { promptAppsInteractions } from "./prompts/common/promptAppsInteractions";
+import { ThorClient } from "@vechain/sdk-network";
+import { mainNetwork, testNetwork } from "./utils";
 
 const { Select } = require("enquirer");
 
 const main = async () => {
-  const prompt = new Select({
+  const networkPrompt = new Select({
+    name: "network",
+    message: "Which network do you want to use?",
+    choices: ["Mainnet", "Testnet"],
+  });
+
+  const network = await networkPrompt.run();
+
+  const net = network === "Mainnet" ? mainNetwork : testNetwork;
+
+  const thorClient = new ThorClient(net);
+
+  const actionPrompt = new Select({
     name: "mainChoice",
     message: "What do you want to do?",
     choices: [
@@ -17,20 +31,20 @@ const main = async () => {
     ],
   });
 
-  const response = await prompt.run();
+  const action = await actionPrompt.run();
 
-  switch (response) {
+  switch (action) {
     case "Analyse transfers":
-      await transfersPrompt();
+      await transfersPrompt(thorClient);
       break;
     case "Analyse votes":
-      await votesPrompt();
+      await votesPrompt(thorClient);
       break;
     case "Generate XLS DAO insights":
-      await promptInsights();
+      await promptInsights(thorClient);
       break;
     case "Generate XLS Apps interactions":
-      await promptAppsInteractions();
+      await promptAppsInteractions(thorClient);
       break;
   }
 };

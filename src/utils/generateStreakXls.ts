@@ -1,6 +1,7 @@
 import writeXlsxFile from "write-excel-file/node";
 import { lookupDappsInteractions } from "../lookupDappsInteractions";
 import dayjs, { Dayjs } from "dayjs";
+import { ThorClient } from "@vechain/sdk-network";
 
 /**
  * Create a range of Day.js dates between a start and end date.
@@ -22,35 +23,24 @@ export function getDaysBetween(start: Dayjs, end: Dayjs) {
 const startDate = dayjs("2024-03-01");
 const getDaysBetweenResult = getDaysBetween(startDate, dayjs());
 
-export const getNumberOfActionsPerDay = async (address: string) => {
-  const dappInteractions = await lookupDappsInteractions(address);
+export const getNumberOfActionsPerDay = async (
+  thorClient: ThorClient,
+  address: string
+) => {
+  const dappInteractions = await lookupDappsInteractions(thorClient, address);
 
   // Get the timestamp of all the interactions - transfers and events
-  const tokenTransfersDappInteractions = [
-    dappInteractions.mugshotTransfers,
-    dappInteractions.cleanifyTransfers,
-    dappInteractions.greencartTransfers,
-    dappInteractions.greenAmbassadorTransfers,
-  ];
-  const tokenTransfersTimestampOnly = tokenTransfersDappInteractions.flatMap(
-    (transfer) => transfer.transfers.map((t) => t.meta.blockTimestamp)
-  );
-  const eventsDappInteractions = [dappInteractions.cleanifyNewDailyEvents];
+  const generalDappsInteractions = Object.values(dappInteractions);
 
-  const eventsTimestampOnly = eventsDappInteractions.flatMap((event) =>
-    event.map((e) => e.meta.blockTimestamp)
+  const transfersTimestamps = generalDappsInteractions.flatMap((transfer) =>
+    transfer.transfers.map((t) => t.meta.blockTimestamp)
   );
-
-  const allTimestamps = [
-    ...tokenTransfersTimestampOnly,
-    ...eventsTimestampOnly,
-  ];
 
   // Get the timestamp of all the interactions - transfers and events
 
   const dayActionMap: Record<string, number> = {};
   getDaysBetweenResult.forEach((day) => {
-    const actionsInDay = allTimestamps.filter((timestamp) =>
+    const actionsInDay = transfersTimestamps.filter((timestamp) =>
       dayjs.unix(timestamp).isSame(day, "day")
     );
     dayActionMap[day.format("YYYY-MM-DD")] = actionsInDay.length;
@@ -60,12 +50,13 @@ export const getNumberOfActionsPerDay = async (address: string) => {
 };
 
 export const generateStreakXls = async (
+  thorClient: ThorClient,
   addresses: string[],
   filePath = "./streak.xlsx"
 ) => {
   const actionsPerDay = await Promise.all(
     addresses.map((address) => {
-      return getNumberOfActionsPerDay(address);
+      return getNumberOfActionsPerDay(thorClient, address);
     })
   );
 

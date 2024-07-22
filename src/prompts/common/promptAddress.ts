@@ -1,5 +1,6 @@
 import { addressUtils } from "@vechain/sdk-core";
-import { commonAddressesWithNameMapping } from "../../constant";
+import { getCommonAddresses } from "../../constant/index";
+import { ThorClient } from "@vechain/sdk-network";
 
 const { Select, Input } = require("enquirer");
 
@@ -13,11 +14,14 @@ const { Select, Input } = require("enquirer");
  * 
  */
 export const promptAddress = async (
+  thorClient: ThorClient,
   message = "Select an address",
   type: "withCommon" | "custom" = "withCommon",
   anyoneAllowed = true,
   customAddressAllowed = true
 ): Promise<string | undefined> => {
+  const { commonAddresses } = getCommonAddresses(thorClient);
+
   if (type === "custom") return promptForCustomAddress(message);
 
   const commonAddressPrompt = new Select({
@@ -28,7 +32,10 @@ export const promptAddress = async (
       ...(customAddressAllowed
         ? [{ message: "Custom address", name: "custom" }]
         : []),
-      ...commonAddressesWithNameMapping,
+      ...commonAddresses.map((comm) => ({
+        message: comm.name,
+        name: comm.name,
+      })),
     ],
   });
   const result = await commonAddressPrompt.run();
@@ -37,7 +44,24 @@ export const promptAddress = async (
 
   if (result === "custom") return promptForCustomAddress("Enter the address");
 
-  return result;
+  const selectedApp = commonAddresses.find((comm) => comm.name === result);
+  if (!selectedApp) throw new Error("Invalid app selected");
+
+  const appAddressPrompt = new Select({
+    name: "fromAppChoice",
+    message: `Which address of ${result}?`,
+    choices: [
+      { message: "Treasury", name: selectedApp.treasury },
+      ...selectedApp.contracts.map((contract) => ({
+        message: contract.name,
+        name: contract.address,
+      })),
+    ],
+  });
+
+  const selectedAddress = await appAddressPrompt.run();
+
+  return selectedAddress;
 };
 
 const promptForCustomAddress = async (

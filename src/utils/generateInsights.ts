@@ -4,6 +4,7 @@ import {
 } from "./filterAllocationVotes";
 import writeXlsxFile from "write-excel-file/node";
 import { XApp, getApps, getCurrentRoundId } from ".";
+import { ThorClient } from "@vechain/sdk-network";
 
 const generateRoundsOverviewXlsData = async (
   addressesWithVotes: Record<string, Record<string, DecodedCastVoteEvent>>,
@@ -251,10 +252,11 @@ const generateXlsFile = async (
 };
 
 export const generateInsights = async (
+  thorClient: ThorClient,
   filePath = "./vebetterdao_insights.xlsx"
 ) => {
-  const apps = await getApps();
-  const currentRoundId = await getCurrentRoundId();
+  const apps = await getApps(thorClient);
+  const currentRoundId = await getCurrentRoundId(thorClient);
   const allRounds = Array.from(
     { length: Number(currentRoundId) },
     (_, i) => i + 1
@@ -266,7 +268,10 @@ export const generateInsights = async (
   //get all votes for each round concurrently and then process them
   const roundsVotes = await Promise.all(
     allRounds.map(async (roundId) => {
-      const { mapDecoded: votes } = await filterAllocationVotes(roundId);
+      const { mapDecoded: votes } = await filterAllocationVotes(
+        thorClient,
+        roundId
+      );
       return { roundId, votes };
     })
   );

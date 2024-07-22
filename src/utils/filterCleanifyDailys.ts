@@ -1,13 +1,22 @@
-import {
-  CleanifyChallengeAddedEvent,
-  cleanifyDailyContractAddress,
-} from "../constant";
-import { thorClient } from "./thor";
+import { ThorClient } from "@vechain/sdk-network";
+import { CleanifyChallengeAddedEvent, getCommonAddresses } from "../constant";
 import { abi } from "@vechain/sdk-core";
 
 const challengeAddedEvent = new abi.Event(CleanifyChallengeAddedEvent);
 
-export const filterCleanifyDailys = async (address?: string) => {
+export const filterCleanifyDailys = async (
+  thorClient: ThorClient,
+  address?: string
+) => {
+  const { commonAddresses } = getCommonAddresses(thorClient);
+
+  const cleanifyApp = commonAddresses.find((comm) => comm.name === "Cleanify");
+  if (!cleanifyApp) throw new Error("Cleanify app not found");
+  const cleanifyDailyContractAddress = cleanifyApp.contracts.find(
+    (contract) => contract.name === "CleanifyDaily"
+  )?.address;
+  if (!cleanifyDailyContractAddress)
+    throw new Error("Cleanify Daily contract not found");
   const currentBlock = await thorClient.blocks.getBestBlockCompressed();
 
   const transferTopics = challengeAddedEvent.encodeFilterTopics([
