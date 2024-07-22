@@ -22,5 +22,6 @@ export const promptRoundId = async (
     ],
   });
 
-  return await whichRoundPrompt.run();
+  const round = await whichRoundPrompt.run();
+  return String(round);
 };

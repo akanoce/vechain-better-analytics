@@ -7,8 +7,8 @@ export const mainnetUrl = "https://mainnet.vechain.org";
 export const mainNetwork = new HttpClient(mainnetUrl);
 
 export const urlToNetworkType = {
-  [testnetUrl]: "main",
-  [mainnetUrl]: "test",
+  [testnetUrl]: "test",
+  [mainnetUrl]: "main",
 };
 
 export const networkTypeToUrl = {

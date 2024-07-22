@@ -41,7 +41,7 @@ export const votesPrompt = async (thorClient: ThorClient) => {
   if (what === "votingRound") {
     const roundId = await promptRoundId(rounds);
     const { totalVotesCasted, formattedDecoded, appsInsights } =
-      await filterAllocationVotes(roundId);
+      await filterAllocationVotes(thorClient, roundId);
 
     console.log("Top 10 voters:", formattedDecoded.slice(0, 10));
     console.log("Total votes casted:", totalVotesCasted);

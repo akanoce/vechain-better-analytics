@@ -18,6 +18,8 @@ const main = async () => {
 
   const net = network === "Mainnet" ? mainNetwork : testNetwork;
 
+  console.log(`Using ${net.baseURL} network`);
+
   const thorClient = new ThorClient(net);
 
   const actionPrompt = new Select({

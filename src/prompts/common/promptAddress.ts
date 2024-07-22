@@ -61,7 +61,7 @@ export const promptAddress = async (
 
   const selectedAddress = await appAddressPrompt.run();
 
-  return selectedAddress;
+  return String(selectedAddress);
 };
 
 const promptForCustomAddress = async (

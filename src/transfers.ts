@@ -69,8 +69,6 @@ export const filterTransfers = async (
     order: "asc",
   });
 
-  //   console.log("Event logs:", eventLogs.length);
-
   const decoded = eventLogs.map((log) => {
     const decoded = transferEvent.decodeEventLog({
       data: log.data,
