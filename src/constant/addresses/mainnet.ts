@@ -64,7 +64,12 @@ export const commonAddressesWithNameMapping = [
   {
     name: "Oily",
     treasury: "0xd52e3356231c9fa86bb9fab731f8c0c3f1018753",
-    contracts: [],
+    contracts: [
+      {
+        name: "Contract",
+        address: "0x8b95cab8f42a0372b31821f77bd704a98579c0fe",
+      },
+    ],
   },
   {
     name: "EVEarn",
