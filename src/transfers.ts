@@ -2,6 +2,7 @@ import { abi, unitsUtils } from "@vechain/sdk-core";
 import { getCommonAddresses, TranferEventAbi } from "./constant";
 import { EventLogs, ThorClient } from "@vechain/sdk-network";
 import { getAllEvents } from "./utils";
+import { vot3ContractAddress } from "./constant/addresses/mainnet";
 
 const transferEvent = new abi.Event(TranferEventAbi);
 
@@ -54,19 +55,21 @@ export const filterTransfers = async (
     order: "asc",
   });
 
-  const decoded = eventLogs.map((log) => {
-    const decoded = transferEvent.decodeEventLog({
-      data: log.data,
-      topics: log.topics,
-    });
-    return {
-      from: decoded._from,
-      to: decoded._to,
-      value: decoded._value,
-      formattedValue: unitsUtils.formatUnits(decoded._value.toString(), 18),
-      meta: log.meta,
-    };
-  });
+  const decoded = eventLogs
+    .map((log) => {
+      const decoded = transferEvent.decodeEventLog({
+        data: log.data,
+        topics: log.topics,
+      });
+      return {
+        from: decoded._from,
+        to: decoded._to,
+        value: decoded._value,
+        formattedValue: unitsUtils.formatUnits(decoded._value.toString(), 18),
+        meta: log.meta,
+      };
+    }) // filter out the transfers to the vot3 contract
+    .filter((log) => log.to !== vot3ContractAddress);
 
   const totalTransferred = decoded.reduce((acc, log) => {
     return acc + parseFloat(log.formattedValue);
