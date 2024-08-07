@@ -1,6 +1,6 @@
 import { abi, unitsUtils } from "@vechain/sdk-core";
 import { AllocationVoteCastAbi, getCommonAddresses } from "../constant";
-import { XApp, getApps } from ".";
+import { XApp, getAllEvents, getApps } from ".";
 import { ThorClient } from "@vechain/sdk-network";
 
 const eventFragment = new abi.Event(AllocationVoteCastAbi);
@@ -25,29 +25,13 @@ export const filterAllocationVotes = async (
   for (const app of apps) {
     appsMapping[app.id] = app;
   }
-  const currentBlock = await thorClient.blocks.getBestBlockCompressed();
   const votingTopics = eventFragment.encodeFilterTopics([voter, roundId]);
 
-  const eventLogs = await thorClient.logs.filterEventLogs({
-    // Specify the range of blocks to search for events
-
-    range: {
-      unit: "block",
-      from: 0,
-      to: currentBlock?.number,
-    },
-    // Additional options for the query, such as offset and limit
-    options: {
-      offset: 0,
-      limit: 10000000,
-    },
-    // Define criteria for filtering events
+  const eventLogs = await getAllEvents({
+    thor: thorClient,
     criteriaSet: [
       {
-        // Contract address to filter events
         address: xAllocationVotingAddress,
-        // Event to filter
-        // Topics to further narrow down the search
         topic0: votingTopics[0],
         topic1: votingTopics[1],
         topic2: votingTopics[2],
@@ -55,7 +39,6 @@ export const filterAllocationVotes = async (
         topic4: votingTopics[4],
       },
     ],
-    // Specify the order in which logs should be retrieved (ascending in this case)
     order: "asc",
   });
 

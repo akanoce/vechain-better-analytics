@@ -1,6 +1,7 @@
 import { abi, unitsUtils } from "@vechain/sdk-core";
 import { getCommonAddresses, TranferEventAbi } from "./constant";
 import { EventLogs, ThorClient } from "@vechain/sdk-network";
+import { getAllEvents } from "./utils";
 
 const transferEvent = new abi.Event(TranferEventAbi);
 
@@ -32,32 +33,17 @@ export const filterTransfers = async (
   key?: string
 ): Promise<FilterTransfersReturnType> => {
   const { b3trContractAddress } = getCommonAddresses(thorClient);
-  const currentBlock = await thorClient.blocks.getBestBlockCompressed();
 
   const transferTopics = transferEvent.encodeFilterTopics([
     fromAddress,
     toAddress,
   ]);
 
-  const eventLogs = await thorClient.logs.filterEventLogs({
-    // Specify the range of blocks to search for events
-    range: {
-      unit: "block",
-      from: 0,
-      to: currentBlock?.number,
-    },
-    // Additional options for the query, such as offset and limit
-    options: {
-      offset: 0,
-      limit: 100000,
-    },
-    // Define criteria for filtering events
+  const eventLogs = await getAllEvents({
+    thor: thorClient,
     criteriaSet: [
       {
-        // Contract address to filter events
         address: b3trContractAddress,
-        // Event to filter
-        // Topics to further narrow down the search
         topic0: transferTopics[0],
         topic1: transferTopics[1],
         topic2: transferTopics[2],
@@ -65,7 +51,6 @@ export const filterTransfers = async (
         topic4: transferTopics[4],
       },
     ],
-    // Specify the order in which logs should be retrieved (ascending in this case)
     order: "asc",
   });
 
