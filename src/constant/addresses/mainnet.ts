@@ -2,6 +2,7 @@ export const b3trTreasuryAddress = "0xD5903BCc66e439c753e525F8AF2FeC7be2429593";
 
 //B3TR contracts
 export const b3trContractAddress = "0x5ef79995FE8a89e0812330E4378eB2660ceDe699";
+export const vot3ContractAddress = "0x76Ca782B59C74d088C7D2Cce2f211BC00836c602";
 export const xAllocationVotingAddress =
   "0x89A00Bb0947a30FF95BEeF77a66AEdE3842Fe5B7";
 
@@ -44,13 +45,19 @@ export const commonAddressesWithNameMapping = [
     contracts: [],
   },
   {
-    name: "Cleanify",
-    treasury: "0x61ffc950b04090f5ce857ebf056852a6d27b0c3c",
+    name: "Carboneers",
+    treasury: "0x16743ed8ac5a9c6dfe13440abd78dce5d5bb5982",
     contracts: [],
   },
   {
-    name: "Cleanify",
-    treasury: "0x6b020e5c8e8574388a275cc498b27e3eb91ec3f2",
+    name: "Vyvo",
+    treasury: "0x61ffc950b04090f5ce857ebf056852a6d27b0c3c",
+    contracts: [],
+  },
+
+  {
+    name: "OceanEx",
+    treasury: "0x15Bccf377f1A9bBd0CD8e24D031C9451326f29a0",
     contracts: [],
   },
 ];
