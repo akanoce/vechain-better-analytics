@@ -1,5 +1,5 @@
 import { getCommonAddresses } from "../constant";
-import XAllocationVotingAbi from "../abis/XAllocationVoting.json";
+import XAllocationVotingAbi from "../abis/testnet/XAllocationVoting.json";
 import { ThorClient } from "@vechain/sdk-network";
 
 export const getCurrentRoundId = async (thorClient: ThorClient) => {

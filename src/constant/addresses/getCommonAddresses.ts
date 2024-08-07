@@ -23,6 +23,7 @@ export const getCommonAddresses = (thorClient: ThorClient) => {
       b3trTreasuryAddress: b3trTreasuryAddress,
       b3trContractAddress: b3trContractAddress,
       xAllocationVotingAddress: xAllocationVotingAddress,
+      x2EarnAppsContractAddress: "0x8392B7CCc763dB03b47afcD8E8f5e24F9cf0554D",
       voterRewardsAddress: voterRewardsAddress,
       commonAddresses: commonAddressesWithNameMapping,
     };
@@ -31,6 +32,7 @@ export const getCommonAddresses = (thorClient: ThorClient) => {
     b3trTreasuryAddress: testnetB3trTreasuryAddress,
     b3trContractAddress: testnetB3trContractAddress,
     xAllocationVotingAddress: testnetXAllocationVotingAddress,
+    x2EarnAppsContractAddress: "",
     voterRewardsAddress: testnetVoterRewardsAddress,
     commonAddresses: testnetCommonAddressesWithNameMapping,
   };
