@@ -17,12 +17,30 @@ export const commonAddressesWithNameMapping = [
   {
     name: "Cleanify",
     treasury: "0x6b020e5c8e8574388a275cc498b27e3eb91ec3f2",
-    contracts: [],
+    contracts: [
+      {
+        name: "Dailys",
+        address: "0xa58681692AdDD2e8E37f9113D40Bb9253C03F65e",
+      },
+      {
+        name: "Campaigns",
+        address: "0x7a11D63338576aE8c038868433ea199d7E5319A6",
+      },
+    ],
   },
   {
     name: "GreenCart",
     treasury: "0x4e506ee842ba8ccce88e424522506f5b860e5c9b",
-    contracts: [],
+    contracts: [
+      {
+        name: "Treasury2",
+        address: "0xb2f1c27a3e5686c3dfa971864590b97a80515f92",
+      },
+      {
+        name: "Contract",
+        address: "0x190AB784B0B68deEC7E831502dd65fDd1D2a8f99",
+      },
+    ],
   },
   {
     name: "Green Ambassador",
@@ -32,7 +50,16 @@ export const commonAddressesWithNameMapping = [
   {
     name: "NFBC",
     treasury: "0xcd093a08794dda7fbcc6d5839c85892f8da2e8be",
-    contracts: [],
+    contracts: [
+      {
+        name: "New contract",
+        address: "0xD3db79d40b99EF250F8636196eB0e5AAc8ecFaab",
+      },
+      {
+        name: "Old contract (disabled)",
+        address: "0x7c2EA281eC4Bcb32455035A67DC4f2f6DBCB213D",
+      },
+    ],
   },
   {
     name: "Oily",
