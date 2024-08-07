@@ -41,7 +41,7 @@ export const votesPrompt = async (thorClient: ThorClient) => {
   if (what === "votingRound") {
     const roundId = await promptRoundId(rounds);
     const { totalVotesCasted, formattedDecoded, appsInsights } =
-      await filterAllocationVotes(thorClient, roundId);
+      await filterAllocationVotes(thorClient, Number(roundId));
 
     console.log("Top 10 voters:", formattedDecoded.slice(0, 10));
     console.log("Total votes casted:", totalVotesCasted);
@@ -54,7 +54,10 @@ export const votesPrompt = async (thorClient: ThorClient) => {
 
   if (what === "appVotes") {
     const roundId = await promptRoundId(rounds);
-    const { appsInsights } = await filterAllocationVotes(roundId);
+    const { appsInsights } = await filterAllocationVotes(
+      thorClient,
+      Number(roundId)
+    );
     console.log("Apps insights:", "\n ------- ");
     console.log(generateAppInsightsTable(appsInsights));
   }
@@ -68,7 +71,7 @@ export const votesPrompt = async (thorClient: ThorClient) => {
 
     const { sortedVotes, totalVotesCasted } = await filterAllocationVotes(
       thorClient,
-      roundId,
+      Number(roundId),
       voter
     );
 

@@ -7,4 +7,50 @@ export const xAllocationVotingAddress =
 
 export const voterRewardsAddress = "0x838A33AF756a6366f93e201423E1425f67eC0Fa7";
 
-export const commonAddressesWithNameMapping = [];
+export const commonAddressesWithNameMapping = [
+  {
+    name: "Mugshot",
+    treasury: "0xbfe2122a82c0aea091514f57c7713c3118101eda",
+    contracts: [],
+  },
+  {
+    name: "Cleanify",
+    treasury: "0x6b020e5c8e8574388a275cc498b27e3eb91ec3f2",
+    contracts: [],
+  },
+  {
+    name: "GreenCart",
+    treasury: "0x4e506ee842ba8ccce88e424522506f5b860e5c9b",
+    contracts: [],
+  },
+  {
+    name: "Green Ambassador",
+    treasury: "0x15e74aeb00d367a5a20c61b469df30a25f0e602f",
+    contracts: [],
+  },
+  {
+    name: "NFBC",
+    treasury: "0xcd093a08794dda7fbcc6d5839c85892f8da2e8be",
+    contracts: [],
+  },
+  {
+    name: "Oily",
+    treasury: "0xd52e3356231c9fa86bb9fab731f8c0c3f1018753",
+    contracts: [],
+  },
+  {
+    name: "EVEarn",
+    treasury: "0xb2919e12d035a484f8414643b606b2a180224f54",
+    contracts: [],
+  },
+  {
+    name: "Cleanify",
+    treasury: "0x61ffc950b04090f5ce857ebf056852a6d27b0c3c",
+    contracts: [],
+  },
+  {
+    name: "Cleanify",
+    treasury: "0x6b020e5c8e8574388a275cc498b27e3eb91ec3f2",
+    contracts: [],
+  },
+];
