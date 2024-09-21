@@ -7,6 +7,11 @@ export const xAllocationVotingAddress =
   "0x89A00Bb0947a30FF95BEeF77a66AEdE3842Fe5B7";
 
 export const voterRewardsAddress = "0x838A33AF756a6366f93e201423E1425f67eC0Fa7";
+export const x2EarnRewardsPoolAddress =
+  "0x6Bee7DDab6c99d5B2Af0554EaEA484CE18F52631";
+
+export const veRocketAddress = "0xA95ccb09da06e3bf48A9e8F9E488C3124748b4a6";
+export const dexPoolAddresses = [veRocketAddress];
 
 export const commonAddressesWithNameMapping = [
   {
@@ -43,12 +48,12 @@ export const commonAddressesWithNameMapping = [
     ],
   },
   {
-    name: "Green Ambassador",
+    name: "Green Ambassador Challenge",
     treasury: "0x15e74aeb00d367a5a20c61b469df30a25f0e602f",
     contracts: [],
   },
   {
-    name: "NFBC",
+    name: "Non Fungible Book Club (NFBC)",
     treasury: "0xcd093a08794dda7fbcc6d5839c85892f8da2e8be",
     contracts: [
       {
@@ -67,12 +72,16 @@ export const commonAddressesWithNameMapping = [
     contracts: [
       {
         name: "Contract",
+        address: "0x6968a538f08429809266e7ffb932ba40789853af",
+      },
+      {
+        name: "Contract",
         address: "0x8b95cab8f42a0372b31821f77bd704a98579c0fe",
       },
     ],
   },
   {
-    name: "EVEarn",
+    name: "EVearn",
     treasury: "0xb2919e12d035a484f8414643b606b2a180224f54",
     contracts: [],
   },

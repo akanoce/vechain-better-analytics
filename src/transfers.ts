@@ -51,6 +51,14 @@ export const filterTransfers = async (
         topic3: transferTopics[3],
         topic4: transferTopics[4],
       },
+      {
+        address: vot3ContractAddress,
+        topic0: transferTopics[0],
+        topic1: transferTopics[1],
+        topic2: transferTopics[2],
+        topic3: transferTopics[3],
+        topic4: transferTopics[4],
+      },
     ],
     order: "asc",
   });
@@ -61,6 +69,8 @@ export const filterTransfers = async (
         data: log.data,
         topics: log.topics,
       });
+      if (decoded._from === "0x0" || decoded._to === "0x0")
+        console.log("0x0 decoded", decoded);
       return {
         from: decoded._from,
         to: decoded._to,

@@ -4,6 +4,7 @@ import { promptInsights } from "./prompts/common/promptInsights";
 import { promptAppsInteractions } from "./prompts/common/promptAppsInteractions";
 import { ThorClient } from "@vechain/sdk-network";
 import { mainNetwork, testNetwork } from "./utils";
+import { rewardsPrompt } from "./prompts/rewardsPrompt";
 
 const { Select } = require("enquirer");
 
@@ -27,6 +28,7 @@ const main = async () => {
     message: "What do you want to do?",
     choices: [
       "Analyse transfers",
+      "Analyse rewards",
       "Analyse votes",
       "Generate XLS DAO insights",
       "Generate XLS Apps interactions",
@@ -41,6 +43,9 @@ const main = async () => {
       break;
     case "Analyse votes":
       await votesPrompt(thorClient);
+      break;
+    case "Analyse rewards":
+      await rewardsPrompt(thorClient);
       break;
     case "Generate XLS DAO insights":
       await promptInsights(thorClient);

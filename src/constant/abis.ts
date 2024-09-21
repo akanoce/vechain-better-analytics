@@ -21,6 +21,81 @@ export const TranferEventAbi = {
   type: "event",
 };
 
+export const RoundCreatedAbi = {
+  anonymous: false,
+  inputs: [
+    {
+      indexed: false,
+      internalType: "uint256",
+      name: "roundId",
+      type: "uint256",
+    },
+    {
+      indexed: false,
+      internalType: "address",
+      name: "proposer",
+      type: "address",
+    },
+    {
+      indexed: false,
+      internalType: "uint256",
+      name: "voteStart",
+      type: "uint256",
+    },
+    {
+      indexed: false,
+      internalType: "uint256",
+      name: "voteEnd",
+      type: "uint256",
+    },
+    {
+      indexed: false,
+      internalType: "bytes32[]",
+      name: "appsIds",
+      type: "bytes32[]",
+    },
+  ],
+  name: "RoundCreated",
+  type: "event",
+};
+
+export const RewardDistributedAbi = {
+  anonymous: false,
+  inputs: [
+    {
+      indexed: false,
+      internalType: "uint256",
+      name: "amount",
+      type: "uint256",
+    },
+    {
+      indexed: true,
+      internalType: "bytes32",
+      name: "appId",
+      type: "bytes32",
+    },
+    {
+      indexed: true,
+      internalType: "address",
+      name: "receiver",
+      type: "address",
+    },
+    {
+      indexed: false,
+      internalType: "string",
+      name: "proof",
+      type: "string",
+    },
+    {
+      indexed: true,
+      internalType: "address",
+      name: "distributor",
+      type: "address",
+    },
+  ],
+  name: "RewardDistributed",
+  type: "event",
+};
 export const AllocationVoteCastAbi = {
   anonymous: false,
   inputs: [
